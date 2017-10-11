@@ -50,7 +50,7 @@ class Core:
             op.error()
             for row in self.list:
                 if row[0] == op.can_add(list):
-                    row[0] = course_id
+                    row[0] = course_id 1
                     row[1] = 0
                     row[2] = op.get_end_time()
                     row[3]=op.get_class_over_time(start_time)
