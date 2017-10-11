@@ -72,7 +72,7 @@ class Core:
             self.list = set_r(r, self.list, course_id)
         print self.list
 
-#################################################
+
 if __name__ == '__main__':
     c = Core()
     c.tea_check_in('51610189')
