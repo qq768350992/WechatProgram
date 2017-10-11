@@ -8,7 +8,7 @@ import open_checkin
 
 class Core:
     def __init__(self):
-        self.list = []
+        self.list = [['516188',0,1,2]]
 
     def tea_ui(self):
         # course_id入手
@@ -38,20 +38,41 @@ class Core:
         time_limit = int(config.get('time', 'timewindow'))
         # 正点时间
         op = open_checkin.Check_In(course_id)
-        if op.can_add(list) == False:
-            return
-
-        t = threading.Timer(25 * 60)
         start_time = op.get_start_time()
-        self.list = set_r(1, self.list, course_id)
-        self.list.append([course_id, 0, op.get_end_time(), op.get_class_over_time(start_time)])
-        t.start()
 
+        if op.can_add(self.list) == True:
+            op.error()
+            self.list.append([course_id, 1, op.get_end_time(), op.get_class_over_time(start_time)])
+        elif op.can_add(self.list) == False:
+            op.error()
+            return
+        else:
+            op.error()
+            for row in self.list:
+                if row[0] == op.can_add(list):
+                    row[0] = course_id
+                    row[1] = 0
+                    row[2] = op.get_end_time()
+                    row[3]=op.get_class_over_time(start_time)
+        print self.list
+        t1 = threading.Timer(2, self.close, (2, course_id))
+        t1.start()
 
-        t = threading.Timer((time_limit - 25) * 60)
-        self.list = set_r(2, self.list, course_id)
-        t.start()
-        self.list = set_r(0, self.list, course_id)
-        self.list.pop()
+        t2 = threading.Timer(5, self.close, (0, course_id))
+        t2.start()
+
+    def close(self, r, course_id):
+        if r == 0:
+            i = 0
+            for row in self.list:
+                if row[0] == course_id:
+                    self.list.pop(i)
+                i += 1
+        else:
+            self.list = set_r(r, self.list, course_id)
+        print self.list
 
 #################################################
+if __name__ == '__main__':
+    c = Core()
+    c.tea_check_in('51610189')

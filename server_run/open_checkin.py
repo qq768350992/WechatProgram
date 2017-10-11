@@ -5,6 +5,7 @@ from course import *
 class Check_In:
     def __init__(self, course_id):
         self.course_id = course_id
+        self.msg = ''
 
     def get_start_time(self):
         return time.localtime()[3] * 3600 + time.localtime()[4] * 60 + time.localtime()[5]
@@ -64,31 +65,35 @@ class Check_In:
                         return row[0]
         return False
 
+    def error(self):
+        print '%s' % self.msg
+
     # 当前时间还在本节课节次中
     def can_add(self, list):
+        if type(self.has_course(list)) != bool:
+            return self.has_course(list)
+        if type(self.has_tea_wechat(list)) != bool:
+            return self.has_tea_wechat(list)
+        if type(self.has_stu_wechat(list)) != bool:
+            return self.has_stu_wechat(list)
         if self.has_tea_wechat(list) == True:
             if self.has_course(list) == True:
-                print '此课程的时间窗口已被你开启过,且仍在运行'
+                self.msg = '此课程的时间窗口已被你开启过,且仍在运行'
                 return False
             else:
-                print '你有其它课程的时间窗口仍在运行'
+                self.msg = '你有其它课程的时间窗口仍在运行'
                 return False
         else:
             if self.has_course(list) != False:
-                print '此课程的时间窗口被其它老师占用'
+                self.msg = '此课程的时间窗口被其它老师占用'
                 return False
             elif self.has_stu_wechat(list) != False:
-                print '此课程的部分学生在上课'
+                self.msg = '此课程的部分学生在上课'
                 return False
             else:
-                # True 直接进队列
                 return True
 
-    def time_permit(self, list):
-        for row in list:
-            pass
-
-if __name__ == '__main__':
-    open = Check_In('51610189')
-    print open.get_end_time()
-    print open.get_class_over_time(55555)
+# if __name__ == '__main__':
+#     open = Check_In('51610189')
+#     list = [['51610166',1,44,3]]
+#     print open.can_add(list)
